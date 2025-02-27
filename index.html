@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Color Match Challenge</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #282c34;
+        font-family: 'Arial', sans-serif;
+        color: white;
+      }
+
+      #game-container {
+        text-align: center;
+      }
+
+      #target-color {
+        width: 100px;
+        height: 100px;
+        margin: 20px auto;
+        border: 4px solid white;
+        border-radius: 50%;
+      }
+
+      #color-options {
+        display: grid;
+        grid-template-columns: repeat(3, 80px);
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .color-option {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid #ccc;
+        transition: transform 0.2s ease-in-out;
+      }
+
+      .color-option:hover {
+        transform: scale(1.1);
+      }
+
+      #score {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+
+      #timer {
+        font-size: 20px;
+      }
+
+      #message {
+        font-size: 18px;
+        margin-top: 10px;
+        color: #61dafb;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game-container">
+      <div id="target-color"></div>
+      <div id="color-options"></div>
+      <div id="score">Score: 0</div>
+      <div id="timer">Time: 30</div>
+      <div id="message"></div>
+    </div>
+
+    <script>
+      const targetColor = document.getElementById('target-color');
+      const colorOptions = document.getElementById('color-options');
+      const scoreDisplay = document.getElementById('score');
+      const timerDisplay = document.getElementById('timer');
+      const messageDisplay = document.getElementById('message');
+
+      let score = 0;
+      let timeLeft = 30;
+      let currentColor;
+      let timer;
+
+      function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+      }
+
+      function generateColors() {
+        const colors = [getRandomColor(), getRandomColor(), getRandomColor()];
+        currentColor = colors[Math.floor(Math.random() * 3)];
+        targetColor.style.backgroundColor = currentColor;
+
+        colorOptions.innerHTML = '';
+        colors.forEach((color) => {
+          const option = document.createElement('div');
+          option.className = 'color-option';
+          option.style.backgroundColor = color;
+          option.addEventListener('click', () => checkColor(color));
+          colorOptions.appendChild(option);
+        });
+      }
+
+      function checkColor(selectedColor) {
+        if (selectedColor === currentColor) {
+          score++;
+          scoreDisplay.textContent = `Score: ${score}`;
+          messageDisplay.textContent = 'Correct!';
+          messageDisplay.style.color = '#a0f0a0';
+          generateColors();
+        } else {
+          messageDisplay.textContent = 'Incorrect!';
+          messageDisplay.style.color = '#f0a0a0';
+        }
+      }
+
+      function updateTimer() {
+        timeLeft--;
+        timerDisplay.textContent = `Time: ${timeLeft}`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          colorOptions.style.pointerEvents = 'none';
+          messageDisplay.textContent = `Game Over! Your score: ${score}`;
+          messageDisplay.style.color = '#61dafb';
+        }
+      }
+
+      function startGame() {
+        generateColors();
+        timer = setInterval(updateTimer, 1000);
+      }
+
+      startGame();
+    </script>
+  </body>
+</html>
